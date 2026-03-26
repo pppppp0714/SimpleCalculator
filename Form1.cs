@@ -4,6 +4,8 @@ namespace SimpleCalculator
     {
         // 연산자 클릭 후 다음 숫자 입력 시 txtOutput을 지우기 위한 플래그
         private bool pendingClearOutputOnNextDigit = false;
+        // 괄호 상태 추적: 각 타입마다 열려있는 개수로 토글 결정
+        private int roundOpenCount = 0; // ()
 
         public Form1()
         {
@@ -116,6 +118,20 @@ namespace SimpleCalculator
                     break;
                 case '/':
                     ApplyOperator("÷");
+                    e.Handled = true;
+                    break;
+                case '(':
+                    // 왼쪽 소괄호는 바로 삽입하고 카운트 증가
+                    txtInput.Text += '(';
+                    roundOpenCount++;
+                    pendingClearOutputOnNextDigit = true;
+                    e.Handled = true;
+                    break;
+                case ')':
+                    // 오른쪽 소괄호는 삽입하고, 열린 카운트가 있으면 감소
+                    txtInput.Text += ')';
+                    if (roundOpenCount > 0) roundOpenCount--;
+                    pendingClearOutputOnNextDigit = true;
                     e.Handled = true;
                     break;
                 case '=':
@@ -242,80 +258,164 @@ namespace SimpleCalculator
             if (string.IsNullOrWhiteSpace(expr))
                 return;
 
-            // 수식에 이미 '='가 포함되어 있으면 아무 작업도 하지 않습니다.
             if (expr.Contains('='))
                 return;
 
-            // 연산자 찾기 (단일 연산자 수식 A+B 같은 형식을 지원)
-            int opIndex = -1;
-            char op = '\0';
-            for (int i = 0; i < expr.Length; i++)
+            try
+            {
+                double result = EvaluateExpression(expr);
+                string resultStr = Math.Abs(result % 1) < 1e-10 ? ((long)result).ToString() : result.ToString();
+                txtInput.Text = expr + "=" + resultStr;
+                txtOutput.Text = resultStr;
+            }
+            catch
+            {
+                txtOutput.Text = "Error";
+            }
+            pendingClearOutputOnNextDigit = false;
+        }
+
+        private void btnParentheses_Click(object sender, EventArgs e)
+        {
+            // 세 종류의 괄호를 순서대로 처리: 먼저 ( ), 다음 { }, 다음 [ ]
+            // 동작: 해당 타입의 열려있는 개수가 0이면 왼쪽 괄호를 삽입하고 카운트를 증가,
+            // 열려있는 개수가 >0이면 오른쪽 괄호를 삽입하고 카운트를 감소시킵니다.
+            // 여기서는 순환 선택을 위해 한 번 클릭 시 라운드 괄호, 두 번째 클릭 시 중괄호, 세 번째 클릭 시 대괄호를 삽입.
+            // 더 직관적으로 하기 위해 클릭 시 내부 상태에 따라 각 괄호 유형의 왼/오른쪽을 전환합니다.
+
+            // round
+            if (roundOpenCount == 0)
+            {
+                txtInput.Text += "(";
+                roundOpenCount++;
+            }
+            else
+            {
+                txtInput.Text += ")";
+                roundOpenCount--;
+            }
+
+            pendingClearOutputOnNextDigit = true;
+        }
+
+        // Evaluate expression with operators + - X ÷ and parentheses (), {}, []
+        // Convert 'X' -> '*', '÷' -> '/'
+        private double EvaluateExpression(string expr)
+        {
+            // Replace curly and square braces with parentheses for evaluation after mapping
+            // Keep X and ÷ as tokens
+            var outputQueue = new System.Collections.Generic.Queue<string>();
+            var opStack = new System.Collections.Generic.Stack<string>();
+
+            int i = 0;
+            while (i < expr.Length)
             {
                 char c = expr[i];
+                if (char.IsWhiteSpace(c)) { i++; continue; }
+
+                if (char.IsDigit(c) || c == '.')
+                {
+                    int j = i;
+                    while (j < expr.Length && (char.IsDigit(expr[j]) || expr[j] == '.')) j++;
+                    outputQueue.Enqueue(expr.Substring(i, j - i));
+                    i = j;
+                    continue;
+                }
+
+                // opening brackets
+                if (c == '(' || c == '{' || c == '[')
+                {
+                    opStack.Push(c.ToString());
+                    i++;
+                    continue;
+                }
+
+                // closing brackets
+                if (c == ')' || c == '}' || c == ']')
+                {
+                    string open = null;
+                    if (c == ')') open = "(";
+                    if (c == '}') open = "{";
+                    if (c == ']') open = "[";
+
+                    while (opStack.Count > 0 && opStack.Peek() != open)
+                    {
+                        outputQueue.Enqueue(opStack.Pop());
+                    }
+                    if (opStack.Count == 0) throw new Exception("Mismatched parentheses");
+                    opStack.Pop(); // pop the opening
+                    i++;
+                    continue;
+                }
+
+                // operators
                 if (c == '+' || c == '-' || c == 'X' || c == '÷')
                 {
-                    opIndex = i;
-                    op = c;
-                    break;
+                    string op = c.ToString();
+                    int prec = GetPrecedence(op);
+                    while (opStack.Count > 0 && GetPrecedence(opStack.Peek()) >= prec)
+                    {
+                        outputQueue.Enqueue(opStack.Pop());
+                    }
+                    opStack.Push(op);
+                    i++;
+                    continue;
+                }
+
+                // equals or other chars - stop
+                if (c == '=') break;
+
+                // unknown char
+                i++;
+            }
+
+            while (opStack.Count > 0)
+            {
+                var t = opStack.Pop();
+                if (t == "(" || t == "{" || t == "[") throw new Exception("Mismatched parentheses");
+                outputQueue.Enqueue(t);
+            }
+
+            // evaluate RPN
+            var evalStack = new System.Collections.Generic.Stack<double>();
+            foreach (var token in outputQueue)
+            {
+                if (double.TryParse(token, out double val))
+                {
+                    evalStack.Push(val);
+                }
+                else
+                {
+                    if (evalStack.Count < 2) throw new Exception("Invalid expression");
+                    double b = evalStack.Pop();
+                    double a = evalStack.Pop();
+                    double r = 0;
+                    switch (token)
+                    {
+                        case "+": r = a + b; break;
+                        case "-": r = a - b; break;
+                        case "X": r = a * b; break;
+                        case "÷":
+                            if (b == 0) throw new DivideByZeroException();
+                            r = a / b; break;
+                        default: throw new Exception("Unknown operator");
+                    }
+                    evalStack.Push(r);
                 }
             }
 
-            if (opIndex <= 0 || opIndex >= expr.Length - 1)
+            if (evalStack.Count != 1) throw new Exception("Invalid expression");
+            return evalStack.Pop();
+        }
+
+        private int GetPrecedence(string op)
+        {
+            return op switch
             {
-                // 잘못된 수식 (연산자가 없거나 피연산자가 없음)
-                return;
-            }
-
-            string left = expr.Substring(0, opIndex);
-            string right = expr.Substring(opIndex + 1);
-
-            if (!double.TryParse(left, out double a) || !double.TryParse(right, out double b))
-            {
-                // 숫자로 변환할 수 없음
-                return;
-            }
-
-            double result = 0;
-            bool valid = true;
-            switch (op)
-            {
-                case '+':
-                    result = a + b;
-                    break;
-                case '-':
-                    result = a - b;
-                    break;
-                case 'X':
-                    result = a * b;
-                    break;
-                case '÷':
-                    if (b == 0)
-                        valid = false; // 0으로 나누기 오류
-                    else
-                        result = a / b;
-                    break;
-                default:
-                    valid = false;
-                    break;
-            }
-
-            if (!valid)
-            {
-                txtOutput.Text = "Error";
-                return;
-            }
-
-            string resultStr;
-            // 결과가 정수이면 소수점 없이 표시
-            if (Math.Abs(result % 1) < 1e-10)
-                resultStr = ((long)result).ToString();
-            else
-                resultStr = result.ToString();
-
-            // txtInput에 '=결과'를 추가하고 txtOutput에는 결과만 표시
-            txtInput.Text = expr + "=" + resultStr;
-            txtOutput.Text = resultStr;
-            pendingClearOutputOnNextDigit = false;
+                "+" or "-" => 1,
+                "X" or "÷" => 2,
+                _ => 0,
+            };
         }
 
         private void txt_TextChanged(object sender, EventArgs e)

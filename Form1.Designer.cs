@@ -51,6 +51,7 @@
             btnOperatorSubtraction = new Button();
             btnOperatorAdd = new Button();
             btnOpeartorEqual = new Button();
+            btnParentheses = new Button();
             SuspendLayout();
             // 
             // lblTitle
@@ -75,7 +76,7 @@
             // txtOutput
             // 
             txtOutput.Font = new Font("맑은 고딕", 20F);
-            txtOutput.Location = new Point(26, 169);
+            txtOutput.Location = new Point(26, 160);
             txtOutput.Name = "txtOutput";
             txtOutput.Size = new Size(387, 52);
             txtOutput.TabIndex = 2;
@@ -83,7 +84,7 @@
             // 
             // btnNumber0
             // 
-            btnNumber0.Location = new Point(135, 417);
+            btnNumber0.Location = new Point(135, 454);
             btnNumber0.Name = "btnNumber0";
             btnNumber0.Size = new Size(81, 40);
             btnNumber0.TabIndex = 5;
@@ -93,7 +94,7 @@
             // 
             // btnNumber2
             // 
-            btnNumber2.Location = new Point(135, 371);
+            btnNumber2.Location = new Point(135, 408);
             btnNumber2.Name = "btnNumber2";
             btnNumber2.Size = new Size(81, 40);
             btnNumber2.TabIndex = 6;
@@ -103,7 +104,7 @@
             // 
             // btnNumber1
             // 
-            btnNumber1.Location = new Point(48, 371);
+            btnNumber1.Location = new Point(48, 408);
             btnNumber1.Name = "btnNumber1";
             btnNumber1.Size = new Size(81, 40);
             btnNumber1.TabIndex = 7;
@@ -113,7 +114,7 @@
             // 
             // btnNumber3
             // 
-            btnNumber3.Location = new Point(222, 371);
+            btnNumber3.Location = new Point(222, 408);
             btnNumber3.Name = "btnNumber3";
             btnNumber3.Size = new Size(81, 40);
             btnNumber3.TabIndex = 8;
@@ -123,7 +124,7 @@
             // 
             // btnNumber6
             // 
-            btnNumber6.Location = new Point(222, 325);
+            btnNumber6.Location = new Point(222, 362);
             btnNumber6.Name = "btnNumber6";
             btnNumber6.Size = new Size(81, 40);
             btnNumber6.TabIndex = 9;
@@ -133,7 +134,7 @@
             // 
             // btnNumber9
             // 
-            btnNumber9.Location = new Point(222, 279);
+            btnNumber9.Location = new Point(222, 316);
             btnNumber9.Name = "btnNumber9";
             btnNumber9.Size = new Size(81, 40);
             btnNumber9.TabIndex = 10;
@@ -143,7 +144,7 @@
             // 
             // btnNumber5
             // 
-            btnNumber5.Location = new Point(135, 325);
+            btnNumber5.Location = new Point(135, 362);
             btnNumber5.Name = "btnNumber5";
             btnNumber5.Size = new Size(81, 40);
             btnNumber5.TabIndex = 11;
@@ -153,7 +154,7 @@
             // 
             // btnNumber8
             // 
-            btnNumber8.Location = new Point(135, 279);
+            btnNumber8.Location = new Point(135, 316);
             btnNumber8.Name = "btnNumber8";
             btnNumber8.Size = new Size(81, 40);
             btnNumber8.TabIndex = 12;
@@ -163,7 +164,7 @@
             // 
             // btnNumber4
             // 
-            btnNumber4.Location = new Point(48, 325);
+            btnNumber4.Location = new Point(48, 362);
             btnNumber4.Name = "btnNumber4";
             btnNumber4.Size = new Size(81, 40);
             btnNumber4.TabIndex = 13;
@@ -173,7 +174,7 @@
             // 
             // btnNumber7
             // 
-            btnNumber7.Location = new Point(48, 279);
+            btnNumber7.Location = new Point(48, 316);
             btnNumber7.Name = "btnNumber7";
             btnNumber7.Size = new Size(81, 40);
             btnNumber7.TabIndex = 14;
@@ -183,7 +184,7 @@
             // 
             // btnConversion
             // 
-            btnConversion.Location = new Point(48, 417);
+            btnConversion.Location = new Point(48, 454);
             btnConversion.Name = "btnConversion";
             btnConversion.Size = new Size(81, 40);
             btnConversion.TabIndex = 15;
@@ -192,7 +193,7 @@
             // 
             // btnDecimalPoint
             // 
-            btnDecimalPoint.Location = new Point(222, 417);
+            btnDecimalPoint.Location = new Point(222, 454);
             btnDecimalPoint.Name = "btnDecimalPoint";
             btnDecimalPoint.Size = new Size(81, 40);
             btnDecimalPoint.TabIndex = 16;
@@ -201,7 +202,7 @@
             // 
             // btnClearEntry
             // 
-            btnClearEntry.Location = new Point(48, 233);
+            btnClearEntry.Location = new Point(48, 270);
             btnClearEntry.Name = "btnClearEntry";
             btnClearEntry.Size = new Size(81, 40);
             btnClearEntry.TabIndex = 17;
@@ -211,7 +212,7 @@
             // 
             // btnClear
             // 
-            btnClear.Location = new Point(135, 233);
+            btnClear.Location = new Point(135, 270);
             btnClear.Name = "btnClear";
             btnClear.Size = new Size(81, 40);
             btnClear.TabIndex = 18;
@@ -221,7 +222,7 @@
             // 
             // btnDelete
             // 
-            btnDelete.Location = new Point(222, 233);
+            btnDelete.Location = new Point(222, 270);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new Size(81, 40);
             btnDelete.TabIndex = 19;
@@ -231,7 +232,7 @@
             // 
             // btnOperatorDivide
             // 
-            btnOperatorDivide.Location = new Point(309, 233);
+            btnOperatorDivide.Location = new Point(309, 270);
             btnOperatorDivide.Name = "btnOperatorDivide";
             btnOperatorDivide.Size = new Size(81, 40);
             btnOperatorDivide.TabIndex = 20;
@@ -241,7 +242,7 @@
             // 
             // btnOperatorMultiply
             // 
-            btnOperatorMultiply.Location = new Point(309, 279);
+            btnOperatorMultiply.Location = new Point(309, 316);
             btnOperatorMultiply.Name = "btnOperatorMultiply";
             btnOperatorMultiply.Size = new Size(81, 40);
             btnOperatorMultiply.TabIndex = 21;
@@ -251,7 +252,7 @@
             // 
             // btnOperatorSubtraction
             // 
-            btnOperatorSubtraction.Location = new Point(309, 325);
+            btnOperatorSubtraction.Location = new Point(309, 362);
             btnOperatorSubtraction.Name = "btnOperatorSubtraction";
             btnOperatorSubtraction.Size = new Size(81, 40);
             btnOperatorSubtraction.TabIndex = 22;
@@ -261,7 +262,7 @@
             // 
             // btnOperatorAdd
             // 
-            btnOperatorAdd.Location = new Point(309, 371);
+            btnOperatorAdd.Location = new Point(309, 408);
             btnOperatorAdd.Name = "btnOperatorAdd";
             btnOperatorAdd.Size = new Size(81, 40);
             btnOperatorAdd.TabIndex = 23;
@@ -273,7 +274,7 @@
             // 
             btnOpeartorEqual.BackColor = SystemColors.Highlight;
             btnOpeartorEqual.ForeColor = SystemColors.ButtonFace;
-            btnOpeartorEqual.Location = new Point(309, 417);
+            btnOpeartorEqual.Location = new Point(309, 454);
             btnOpeartorEqual.Name = "btnOpeartorEqual";
             btnOpeartorEqual.Size = new Size(81, 40);
             btnOpeartorEqual.TabIndex = 24;
@@ -281,11 +282,22 @@
             btnOpeartorEqual.UseVisualStyleBackColor = false;
             btnOpeartorEqual.Click += btnOperatorEqual_Click;
             // 
+            // btnParentheses
+            // 
+            btnParentheses.Location = new Point(309, 224);
+            btnParentheses.Name = "btnParentheses";
+            btnParentheses.Size = new Size(81, 40);
+            btnParentheses.TabIndex = 25;
+            btnParentheses.Text = "( )";
+            btnParentheses.UseVisualStyleBackColor = true;
+            btnParentheses.Click += btnParentheses_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(441, 512);
+            Controls.Add(btnParentheses);
             Controls.Add(btnOpeartorEqual);
             Controls.Add(btnOperatorAdd);
             Controls.Add(btnOperatorSubtraction);
@@ -340,5 +352,6 @@
         private Button btnOperatorSubtraction;
         private Button btnOperatorAdd;
         private Button btnOpeartorEqual;
+        private Button btnParentheses;
     }
 }
