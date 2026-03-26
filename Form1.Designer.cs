@@ -207,6 +207,7 @@
             btnClearEntry.TabIndex = 17;
             btnClearEntry.Text = "CE";
             btnClearEntry.UseVisualStyleBackColor = true;
+            btnClearEntry.Click += btnClearEntry_Click;
             // 
             // btnClear
             // 
@@ -216,6 +217,7 @@
             btnClear.TabIndex = 18;
             btnClear.Text = "C";
             btnClear.UseVisualStyleBackColor = true;
+            btnClear.Click += btnClear_Click;
             // 
             // btnDelete
             // 
@@ -225,6 +227,7 @@
             btnDelete.TabIndex = 19;
             btnDelete.Text = "del";
             btnDelete.UseVisualStyleBackColor = true;
+            btnDelete.Click += btnDelete_Click;
             // 
             // btnOperatorDivide
             // 

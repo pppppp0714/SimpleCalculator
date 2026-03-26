@@ -7,6 +7,110 @@ namespace SimpleCalculator
             InitializeComponent();
         }
 
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            // 전체 초기화: txtInput과 txtOutput을 비우고 초기 상태로
+            txtInput.Text = string.Empty;
+            txtOutput.Text = string.Empty;
+        }
+
+        private void btnClearEntry_Click(object sender, EventArgs e)
+        {
+            // 마지막 피연산자 삭제: 예) "10+100" -> "10+"
+            string input = txtInput.Text;
+            if (string.IsNullOrEmpty(input))
+                return;
+
+            // 수식에 '='가 있으면 '='부터 끝까지 제거
+            int eqIndex = input.IndexOf('=');
+            if (eqIndex >= 0)
+            {
+                input = input.Substring(0, eqIndex);
+            }
+
+            // 뒤에서부터 연산자를 찾으면 그 위치까지 남기고 잘라냄
+            int lastOpIndex = -1;
+            for (int i = input.Length - 1; i >= 0; i--)
+            {
+                char c = input[i];
+                if (c == '+' || c == '-' || c == 'X' || c == '÷')
+                {
+                    lastOpIndex = i;
+                    break;
+                }
+            }
+
+            if (lastOpIndex >= 0)
+            {
+                // 연산자까지 포함한 부분을 남김
+                txtInput.Text = input.Substring(0, lastOpIndex + 1);
+                txtOutput.Text = string.Empty;
+            }
+            else
+            {
+                // 연산자가 없다면 전체를 지움
+                txtInput.Text = string.Empty;
+                txtOutput.Text = string.Empty;
+            }
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            // 마지막 글자 하나 삭제: 예) "10+100" -> "10+10"
+            string input = txtInput.Text;
+            if (string.IsNullOrEmpty(input))
+                return;
+
+            // 만약 '='가 포함되어 있으면 '=' 이후부터 삭제 처리 (결과 지우기)
+            int eqIndex = input.IndexOf('=');
+            if (eqIndex >= 0)
+            {
+                // 수식과 결과가 있는 상태이면 결과부터 지움
+                txtInput.Text = input.Substring(0, eqIndex);
+                // 결과를 지운 뒤 txtOutput은 수식의 마지막 피연산자로 갱신
+                // 재사용 ApplyOperator 로직처럼 마지막 피연산자만 남김
+                int lastOpIndex = -1;
+                string withoutEq = txtInput.Text;
+                for (int i = withoutEq.Length - 1; i >= 0; i--)
+                {
+                    char c = withoutEq[i];
+                    if (c == '+' || c == '-' || c == 'X' || c == '÷')
+                    {
+                        lastOpIndex = i;
+                        break;
+                    }
+                }
+
+                if (lastOpIndex >= 0 && lastOpIndex < withoutEq.Length - 1)
+                    txtOutput.Text = withoutEq.Substring(lastOpIndex + 1);
+                else
+                    txtOutput.Text = string.IsNullOrEmpty(withoutEq) ? string.Empty : withoutEq;
+
+                return;
+            }
+
+            // 일반적인 경우: 마지막 문자 삭제
+            txtInput.Text = input.Substring(0, input.Length - 1);
+
+            // txtOutput도 그에 맞춰 갱신: 마지막 피연산자만 남기기
+            int lastOp = -1;
+            string now = txtInput.Text;
+            for (int i = now.Length - 1; i >= 0; i--)
+            {
+                char c = now[i];
+                if (c == '+' || c == '-' || c == 'X' || c == '÷')
+                {
+                    lastOp = i;
+                    break;
+                }
+            }
+
+            if (lastOp >= 0 && lastOp < now.Length - 1)
+                txtOutput.Text = now.Substring(lastOp + 1);
+            else
+                txtOutput.Text = string.IsNullOrEmpty(now) ? string.Empty : now;
+        }
+
         private void btnOperatorEqual_Click(object sender, EventArgs e)
         {
             string expr = txtInput.Text;
