@@ -8,6 +8,121 @@ namespace SimpleCalculator
         public Form1()
         {
             InitializeComponent();
+            // 폼에서 키 입력을 먼저 받도록 설정하고 KeyDown 이벤트 연결
+            this.KeyPreview = true;
+            this.KeyDown += Form1_KeyDown;
+            this.KeyPress += Form1_KeyPress;
+        }
+
+        private void Form1_KeyDown(object? sender, KeyEventArgs e)
+        {
+            // 숫자 키(D0-D9) 처리
+            if (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9)
+            {
+                int d = e.KeyCode - Keys.D0;
+                Button? btn = d switch
+                {
+                    0 => btnNumber0,
+                    1 => btnNumber1,
+                    2 => btnNumber2,
+                    3 => btnNumber3,
+                    4 => btnNumber4,
+                    5 => btnNumber5,
+                    6 => btnNumber6,
+                    7 => btnNumber7,
+                    8 => btnNumber8,
+                    9 => btnNumber9,
+                    _ => null
+                };
+
+                if (btn != null)
+                {
+                    NumberButton_Click(btn, EventArgs.Empty);
+                    e.SuppressKeyPress = true;
+                }
+
+                return;
+            }
+
+            // NumPad 숫자 키 처리
+            if (e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.NumPad9)
+            {
+                int d = e.KeyCode - Keys.NumPad0;
+                Button? btn = d switch
+                {
+                    0 => btnNumber0,
+                    1 => btnNumber1,
+                    2 => btnNumber2,
+                    3 => btnNumber3,
+                    4 => btnNumber4,
+                    5 => btnNumber5,
+                    6 => btnNumber6,
+                    7 => btnNumber7,
+                    8 => btnNumber8,
+                    9 => btnNumber9,
+                    _ => null
+                };
+
+                if (btn != null)
+                {
+                    NumberButton_Click(btn, EventArgs.Empty);
+                    e.SuppressKeyPress = true;
+                }
+                return;
+            }
+
+            // Enter 키는 KeyDown에서 처리
+            if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Return)
+            {
+                btnOperatorEqual_Click(this, EventArgs.Empty);
+                e.SuppressKeyPress = true;
+                return;
+            }
+
+            // 백스페이스는 del 동작과 동일하게 처리
+            if (e.KeyCode == Keys.Back)
+            {
+                btnDelete_Click(this, EventArgs.Empty);
+                e.SuppressKeyPress = true;
+                return;
+            }
+
+            // NumPad '*' 또는 Multiply 키(키패드의 *)도 곱하기로 처리
+            if (e.KeyCode == Keys.Multiply)
+            {
+                ApplyOperator("X");
+                e.SuppressKeyPress = true;
+                return;
+            }
+        }
+
+        private void Form1_KeyPress(object? sender, KeyPressEventArgs e)
+        {
+            // 연산자 문자 입력 처리: '+', '-', '*', '/', '='
+            switch (e.KeyChar)
+            {
+                case '+':
+                    ApplyOperator("+");
+                    e.Handled = true;
+                    break;
+                case '-':
+                    ApplyOperator("-");
+                    e.Handled = true;
+                    break;
+                case '*':
+                    // Shift+8가 '*' 문자를 발생시키면 여기에서 처리됩니다
+                    ApplyOperator("X");
+                    e.Handled = true;
+                    break;
+                case '/':
+                    ApplyOperator("÷");
+                    e.Handled = true;
+                    break;
+                case '=':
+                    btnOperatorEqual_Click(this, EventArgs.Empty);
+                    e.Handled = true;
+                    break;
+            }
         }
 
         private void btnClear_Click(object sender, EventArgs e)
