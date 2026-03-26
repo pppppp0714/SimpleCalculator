@@ -125,9 +125,27 @@ namespace SimpleCalculator
 
         private void btnOperatorAdd_Click(object sender, EventArgs e)
         {
-            string op = "+";
+            ApplyOperator("+");
+        }
 
-            // If last character of txtInput is already an operator, replace it.
+        private void btnOperatorSubtract_Click(object sender, EventArgs e)
+        {
+            ApplyOperator("-");
+        }
+
+        private void btnOperatorMultiply_Click(object sender, EventArgs e)
+        {
+            ApplyOperator("X");
+        }
+
+        private void btnOperatorDivide_Click(object sender, EventArgs e)
+        {
+            ApplyOperator("÷");
+        }
+
+        private void ApplyOperator(string op)
+        {
+            // 연산자가 이미 맨 끝에 있으면 교체, 아니면 추가
             if (!string.IsNullOrEmpty(txtInput.Text))
             {
                 char last = txtInput.Text[txtInput.Text.Length - 1];
@@ -142,11 +160,11 @@ namespace SimpleCalculator
             }
             else
             {
-                // If input empty and user presses +, treat it as starting with 0+
+                // 입력이 비어있을 때 연산자를 누르면 0으로 시작
                 txtInput.Text = "0" + op;
             }
 
-            // For txtOutput, keep only the last operand (text after the last operator).
+            // txtOutput에는 마지막 피연산자만 남김
             string input = txtInput.Text;
             int lastOpIndex = -1;
             for (int i = input.Length - 1; i >= 0; i--)
@@ -165,7 +183,6 @@ namespace SimpleCalculator
             }
             else
             {
-                // If operator is at the end or not found, clear output to allow next number entry
                 txtOutput.Text = string.Empty;
             }
         }

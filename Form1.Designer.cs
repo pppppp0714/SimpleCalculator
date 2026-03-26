@@ -74,9 +74,10 @@
             // 
             // txtOutput
             // 
-            txtOutput.Location = new Point(26, 158);
+            txtOutput.Font = new Font("맑은 고딕", 20F);
+            txtOutput.Location = new Point(26, 169);
             txtOutput.Name = "txtOutput";
-            txtOutput.Size = new Size(387, 27);
+            txtOutput.Size = new Size(387, 52);
             txtOutput.TabIndex = 2;
             txtOutput.TextChanged += textBox2_TextChanged;
             // 
@@ -233,6 +234,7 @@
             btnOperatorDivide.TabIndex = 20;
             btnOperatorDivide.Text = "÷";
             btnOperatorDivide.UseVisualStyleBackColor = true;
+            btnOperatorDivide.Click += btnOperatorDivide_Click;
             // 
             // btnOperatorMultiply
             // 
@@ -242,6 +244,7 @@
             btnOperatorMultiply.TabIndex = 21;
             btnOperatorMultiply.Text = "X";
             btnOperatorMultiply.UseVisualStyleBackColor = true;
+            btnOperatorMultiply.Click += btnOperatorMultiply_Click;
             // 
             // btnOperatorSubtraction
             // 
@@ -251,6 +254,7 @@
             btnOperatorSubtraction.TabIndex = 22;
             btnOperatorSubtraction.Text = "-";
             btnOperatorSubtraction.UseVisualStyleBackColor = true;
+            btnOperatorSubtraction.Click += btnOperatorSubtract_Click;
             // 
             // btnOperatorAdd
             // 
