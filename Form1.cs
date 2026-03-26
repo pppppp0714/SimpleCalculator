@@ -2,6 +2,9 @@ namespace SimpleCalculator
 {
     public partial class Form1 : Form
     {
+        // 연산자 클릭 후 다음 숫자 입력 시 txtOutput을 지우기 위한 플래그
+        private bool pendingClearOutputOnNextDigit = false;
+
         public Form1()
         {
             InitializeComponent();
@@ -12,6 +15,7 @@ namespace SimpleCalculator
             // 전체 초기화: txtInput과 txtOutput을 비우고 초기 상태로
             txtInput.Text = string.Empty;
             txtOutput.Text = string.Empty;
+            pendingClearOutputOnNextDigit = false;
         }
 
         private void btnClearEntry_Click(object sender, EventArgs e)
@@ -45,12 +49,14 @@ namespace SimpleCalculator
                 // 연산자까지 포함한 부분을 남김
                 txtInput.Text = input.Substring(0, lastOpIndex + 1);
                 txtOutput.Text = string.Empty;
+                pendingClearOutputOnNextDigit = false;
             }
             else
             {
                 // 연산자가 없다면 전체를 지움
                 txtInput.Text = string.Empty;
                 txtOutput.Text = string.Empty;
+                pendingClearOutputOnNextDigit = false;
             }
         }
 
@@ -86,6 +92,8 @@ namespace SimpleCalculator
                 else
                     txtOutput.Text = string.IsNullOrEmpty(withoutEq) ? string.Empty : withoutEq;
 
+                pendingClearOutputOnNextDigit = false;
+
                 return;
             }
 
@@ -109,6 +117,8 @@ namespace SimpleCalculator
                 txtOutput.Text = now.Substring(lastOp + 1);
             else
                 txtOutput.Text = string.IsNullOrEmpty(now) ? string.Empty : now;
+
+            pendingClearOutputOnNextDigit = false;
         }
 
         private void btnOperatorEqual_Click(object sender, EventArgs e)
@@ -190,6 +200,7 @@ namespace SimpleCalculator
             // txtInput에 '=결과'를 추가하고 txtOutput에는 결과만 표시
             txtInput.Text = expr + "=" + resultStr;
             txtOutput.Text = resultStr;
+            pendingClearOutputOnNextDigit = false;
         }
 
         private void txt_TextChanged(object sender, EventArgs e)
@@ -212,6 +223,13 @@ namespace SimpleCalculator
                 // Otherwise append the digit. Handle empty text as append (becomes the digit).
                 void AppendOrReplace(TextBox tb)
                 {
+                    // 연산자 클릭 후 처음 숫자를 누르면 txtOutput은 지우고 새 숫자로 시작해야 함
+                    if (tb == txtOutput && pendingClearOutputOnNextDigit)
+                    {
+                        tb.Text = digit;
+                        pendingClearOutputOnNextDigit = false;
+                        return;
+                    }
                     if (string.IsNullOrEmpty(tb.Text) || tb.Text == "0")
                     {
                         tb.Text = digit;
@@ -268,27 +286,9 @@ namespace SimpleCalculator
                 txtInput.Text = "0" + op;
             }
 
-            // txtOutput에는 마지막 피연산자만 남김
-            string input = txtInput.Text;
-            int lastOpIndex = -1;
-            for (int i = input.Length - 1; i >= 0; i--)
-            {
-                char c = input[i];
-                if (c == '+' || c == '-' || c == 'X' || c == '÷')
-                {
-                    lastOpIndex = i;
-                    break;
-                }
-            }
-
-            if (lastOpIndex >= 0 && lastOpIndex < input.Length - 1)
-            {
-                txtOutput.Text = input.Substring(lastOpIndex + 1);
-            }
-            else
-            {
-                txtOutput.Text = string.Empty;
-            }
+            // 연산자 클릭 시 txtOutput을 바로 변경하지 않고
+            // 다음 숫자 입력이 들어올 때 txtOutput을 지우도록 플래그만 설정
+            pendingClearOutputOnNextDigit = true;
         }
     }
 }
